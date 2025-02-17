@@ -1,47 +1,37 @@
 import React from "react";
-import { Task } from "./types/Task";
+import "./App.css";
+import { Route, Routes } from "react-router-dom";
+import HomePage from "./components/Homepage";
+import CallbackPage from "./components/CallbackPage";
+import ProtectedPage from "./components/ProtectedPage";
+import { useAuth0 } from "@auth0/auth0-react";
+import ProfilePage from "./components/ProfilePage";
+import AuthenticationGuard from "./components/AuthenticationGuard";
 import TaskList from "./components/TaskList";
-import TaskForm from "./components/TaskForm";
 
 const App: React.FC = () => {
-  const [tasks, setTasks] = React.useState<Task[]>([]);
-  const [selectedTask, setSelectedTask] = React.useState<Task | null>(null);
-  const [showForm, setShowForm] = React.useState(false);
 
-  const handleAddTask = () => {
-    setSelectedTask(null);
-    setShowForm(true);
-  };
+  const { isLoading } = useAuth0();
 
-  const handleEditTask = (task: Task) => {
-    setSelectedTask(task);
-    setShowForm(true);
-  };
-
-  const handleSaveTask = (task: Task) => {
-    setTasks(prevTasks =>
-      prevTasks.some(t => t.id === task.id)
-        ? prevTasks.map(t => t.id === task.id ? task : t)
-        : [...prevTasks, task]
-    );
-    setShowForm(false);
-  };
-
-  const handleDeleteTask = (id: number) => {
-    setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
-  };
-
-  const handleCancelForm = () => {
-    setShowForm(false);
-  };
+  if (isLoading) return (<div>Loading...</div>)
 
   return (
-    <div className="container mt-4">
-      <h1>Task Management</h1>
-      <button className="btn btn-primary mb-3" onClick={handleAddTask}>Add Task</button>
-      {showForm && <TaskForm task={selectedTask || undefined} onSave={handleSaveTask} onCancel={handleCancelForm} />}
-      <TaskList tasks={tasks} onEdit={handleEditTask} onDelete={handleDeleteTask} />
-    </div>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route
+        path="/profile"
+        element={<AuthenticationGuard component={ProfilePage} />}
+      />
+      <Route
+        path="/protected"
+        element={<AuthenticationGuard component={ProtectedPage} />}
+      />
+            <Route
+        path="/TaskList"
+        element={<AuthenticationGuard component={TaskList} />}
+      />
+      <Route path="/callback" element={<CallbackPage />} />
+    </Routes>
   );
 };
 

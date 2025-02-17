@@ -1,23 +1,43 @@
-import React from 'react';
-import { Task } from '../types/Task';
+import React, { useState } from 'react';
+import { Container, Row, Col, Button, Form } from 'react-bootstrap';
+import TaskItem, { Task } from './TaskItem';
 
-const TaskList: React.FC<{ tasks: Task[]; onEdit: (task: Task) => void; onDelete: (id: number) => void }> = ({ tasks, onEdit, onDelete }) => {
+const TaskList: React.FC = () => {
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [newTask, setNewTask] = useState('');
+
+    const handleAddTask = () => {
+        if (newTask.trim()) {
+            setTasks([...tasks, { id: Date.now(), text: newTask }]);
+            setNewTask('');
+        }
+    };
+
+    const handleEditTask = (updatedTask: Task) => {
+        setTasks(tasks.map(task => task.id === updatedTask.id ? updatedTask : task));
+    };
+
+    const handleDeleteTask = (id: number) => {
+        setTasks(tasks.filter(task => task.id !== id));
+    };
+
     return (
-        <ul className="list-group">
-            {tasks.map((task) => (
-                <li key={task.id} className="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5>{task.title}</h5>
-                        <p>{task.description}</p>
-                        <span className={`badge bg-${task.status === 'open' ? 'primary' : task.status === 'in progress' ? 'warning' : 'success'}`}>{task.status}</span>
-                    </div>
-                    <div>
-                        <button className="btn btn-sm btn-warning me-1" onClick={() => onEdit(task)}>Edit</button>
-                        <button className="btn btn-sm btn-danger" onClick={() => onDelete(task.id)}>Delete</button>
-                    </div>
-                </li>
-            ))}
-        </ul>
+        <Container>
+            <Row>
+                <Col>
+                    <h2>Add a new task</h2>
+                    <Form onSubmit={(e) => { e.preventDefault(); handleAddTask(); }}>
+                        <Form.Group>
+                            <Form.Control type="text" placeholder="Enter task" value={newTask} onChange={(e) => setNewTask(e.target.value)} />
+                        </Form.Group>
+                        <Button variant="primary" type="submit">Add Task</Button>
+                    </Form>
+                    {tasks.map(task => (
+                        <TaskItem key={task.id} task={task} onEdit={handleEditTask} onDelete={handleDeleteTask} />
+                    ))}
+                </Col>
+            </Row>
+        </Container>
     );
 };
 

@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "Task-Management-App-with-TypeScript",
+			"path": "../Task-Management-App-with-TypeScript"
+		}
+	],
+	"settings": {}
+}
