@@ -28,6 +28,7 @@ const TaskList: React.FC = () => {
                     <h2>Add a new task</h2>
                     <Form onSubmit={(e) => { e.preventDefault(); handleAddTask(); }}>
                         <Form.Group>
+                            <label htmlFor="title" className="form-label">Task: </label>
                             <Form.Control type="text" placeholder="Enter task" value={newTask} onChange={(e) => setNewTask(e.target.value)} />
                         </Form.Group>
                         <Button variant="primary" type="submit">Add Task</Button>

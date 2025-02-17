@@ -53,3 +53,7 @@ button {
 .navbar {
     color: white;
 }
+
+.form-label {
+    margin: 5px;
+}
